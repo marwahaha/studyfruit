@@ -1,4 +1,4 @@
-This is a collection of study guides, notes, and tutorials assembled by Cal students. I hope it is useful for those in school and those looking to learn something new.
+This is a collection of study guides, notes, and tutorials assembled by Cal students. This is a not-for-profit project. I hope it is useful for those in school and those looking to learn something new.
 
 ## How to use
 Click on a department page to find relevant materials.
