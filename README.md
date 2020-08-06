@@ -1,11 +1,8 @@
-# a home for supplementary class materials 
-
-This site is for you to learn, to study, and to enjoy the breadth of knowledge available on campus. 
-
-Please upload or link to any resources that you find useful. Examples include study-guides, cheat-sheets, and online tutorials and notes.
+This is a collection of study guides, notes, and tutorials made by Cal students. I hope it is useful for those in school and those looking to learn something new.
 
 ## How to use
-Click on a department page below to find relevant materials:
+Click on a department page to find relevant materials.
+
 * [Asian American Studies](./asianamericanstudies)
 * [Astronomy](./astronomy)
 * [Biology](./biology)
@@ -16,14 +13,12 @@ Click on a department page below to find relevant materials:
 Remember: if you're using this site to study, remember that sometimes the act of making cheat-sheets is better than the cheat-sheet itself!)
 
 ## My course isn't listed!
-That means we do not have any materials for that course. But please add your own.
+That means we do not have any materials for that course. But please add your own if you can.
 
 ## How to contribute
-You can add to any existing page, or create a new one with a GitHub account. If you just want to share, email me at marwahaha@berkeley.edu .
+You can add to any existing page or create a new page with a GitHub account. Click the "View On GitHub" button on the left side. If that's a problem for any reason, simply email me at marwahaha@berkeley.edu .
 
-Here's a great [15-minute tutorial](http://www.markdowntutorial.com) on Markdown.
-
-You can add your files in the `files/` folder. Please give it a descriptive name.
+This site uses Markdown. Here's a great [15-minute tutorial](http://www.markdowntutorial.com) on Markdown. Please add your files with descriptive names in the `files/` folder.
 
 ## Copyright
 Please do NOT post content that you did not write.
