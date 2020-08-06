@@ -19,8 +19,11 @@ Click on a department page to find relevant materials.
 * [Environmental Science, Policy, and Management](./espm)
 * [Ethnic Studies](./ethnicstudies)
 * [French](./french)
-
-
+* [Geography](./geography)
+* [Global Poverty and Practice](./gpp)
+* [History](./history)
+* [Integrative Biology](./integrativebiology)
+* [International and Area Studies](./ias)
 
 Remember: if you're using this site to study, remember that sometimes the act of making cheat-sheets is better than the cheat-sheet itself!)
 
