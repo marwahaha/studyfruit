@@ -7,7 +7,7 @@ Click on a department page to find relevant materials.
 * [Astronomy](./astronomy)
 * [Biology](./biology)
 * [Chemical Engineering](./chemicalengineering)
-
+* [Chemistry](./chemistry)
 
 
 Remember: if you're using this site to study, remember that sometimes the act of making cheat-sheets is better than the cheat-sheet itself!)

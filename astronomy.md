@@ -4,7 +4,7 @@
 
 This is being maintained and developed by various undergraduate students.
 
-http://kartp.astro.berkeley.edu/doku.php
+* [Wiki link](http://kartp.astro.berkeley.edu/doku.php)
 
 
 ## Astronomy 160: Stellar Physics 
