@@ -24,6 +24,18 @@ Click on a department page to find relevant materials.
 * [History](./history)
 * [Integrative Biology](./integrativebiology)
 * [International and Area Studies](./ias)
+* [Industrial Engineering & Operations Research](./ieor)
+* [Materials Science and Engineering](./mse)
+* Math
+* [Mechanical Engineering](./mechanicalengineering)
+* [Molecular and Cell Biology](./mcb)
+* [Nutritional Sciences and Toxicology](./nst)
+* [Peace and Conflict Studies](./pacs)
+* Physics
+* [Political Science](./politicalscience)
+* [Sociology](./sociology)
+* [Statistics](./statistics)
+
 
 Remember: if you're using this site to study, remember that sometimes the act of making cheat-sheets is better than the cheat-sheet itself!)
 
