@@ -1,4 +1,4 @@
-This is a collection of study guides, notes, and tutorials made by Cal students. I hope it is useful for those in school and those looking to learn something new.
+This is a collection of study guides, notes, and tutorials assembled by Cal students. I hope it is useful for those in school and those looking to learn something new.
 
 ## How to use
 Click on a department page to find relevant materials.
@@ -11,6 +11,9 @@ Click on a department page to find relevant materials.
 * [City and Regional Planning](./cityplanning)
 * [Civil and Environmental Engineering](./civilengineering)
 * [Cognitive Science](./cognitivescience)
+* Computer Science
+* [Education](./education)
+* Environmental Design
 
 Remember: if you're using this site to study, remember that sometimes the act of making cheat-sheets is better than the cheat-sheet itself!)
 
