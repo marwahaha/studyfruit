@@ -8,6 +8,7 @@ Click on a department page to find relevant materials.
 * [Biology](./biology)
 * [Chemical Engineering](./chemicalengineering)
 * [Chemistry](./chemistry)
+* [City and Regional Planning](./cityplanning)
 * [Civil and Environmental Engineering](./civilengineering)
 
 
