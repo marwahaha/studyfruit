@@ -1,0 +1,371 @@
+\documentclass[9pt,landscape]{article}
+\usepackage{multicol}
+\usepackage{calc}
+\usepackage{ifthen}
+\usepackage[landscape]{geometry}
+\usepackage{amsmath,amsthm,amsfonts,amssymb}
+\usepackage{framed,tikz,setspace,fancyhdr,enumerate}
+\usepackage{color,graphicx,overpic}
+\usepackage{hyperref}
+\usepackage{vwcol}
+
+\def\Name{Kyle Zentner}
+\def\Session{Spring 2014}
+\def\Title{EE40 Cheatsheet}
+
+\pagestyle{fancy}
+\geometry{letterpaper, margin=1in}
+
+\setstretch{0.1}
+
+\newenvironment{itemize*}%
+  {\begin{itemize}%
+    \setlength{\itemsep}{1pt}%
+    \setlength{\parskip}{1pt}}%
+  {\end{itemize}}
+
+\author{\Name}
+\lhead{\Title}
+
+\def \ind {\perp\!\!\!\perp}
+\def \cupdot {\mathbin{\mathaccent\cdot\cup}}
+
+\pdfinfo{
+  /Title (\Title)
+  /Creator (TeX)
+  /Producer (pdfTeX 1.40.0)
+  /Author (\Name)
+  /Subject (\Title)
+  /Keywords ()}
+
+% This sets page margins to .5 inch if using letter paper, and to 1cm
+% if using A4 paper. (This probably isn't strictly necessary.)
+% If using another size paper, use default 1cm margins.
+\ifthenelse{\lengthtest { \paperwidth = 11in}}
+    { \geometry{top=.5in,left=.5in,right=.5in,bottom=.5in} }
+    {\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
+        {\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
+        {\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
+    }
+
+% Turn off header and footer
+\pagestyle{empty}
+
+% Redefine section commands to use less space
+\makeatletter
+\renewcommand{\section}{\@startsection{section}{1}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%x
+                                {\normalfont\large\bfseries}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{0mm}%
+                                {-1explus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%
+                                {\normalfont\normalsize\bfseries}}
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {1ex plus .2ex}%
+                                {\normalfont\small\bfseries}}
+\makeatother
+
+% Define BibTeX command
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+% Don't print section numbers
+\setcounter{secnumdepth}{0}
+
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt plus 0.5ex}
+
+\begin{document}
+\raggedright
+\footnotesize
+\begin{multicols}{4}
+
+
+% multicol parameters
+% These lengths are set only within the two main columns
+%\setlength{\columnseprule}{0.25pt}
+\setlength{\premulticols}{1pt}
+\setlength{\postmulticols}{1pt}
+\setlength{\multicolsep}{1pt}
+\setlength{\columnsep}{2pt}
+
+\begin{center}
+     \Large{\underline{\Title}} \\
+\end{center}
+
+\section{Equivalent Circuits}
+
+If {\bf no dependent} sources, turn all of the current sources into open circuits and all of the voltage sources into short circuits, and solve for the equivalent resistance ($R_{Th} = R_{eq}$).
+
+For any circuit, deactivate independent sources, add an external source $v_{ex}$, and solve for $i_{ex}$. $R_{Th} = v_{ex}/i_{ex}$.
+
+For any circuit, find $v_{Th} = v_{oc}$ by solving the circuit with an open circuit at the terminals. Find $R_{Th}$ by using the fact that
+
+$i_{sc} = \frac {V_{Th}} {R_{Th}}$
+
+\section{Units}
+\[
+  Volt = V = \frac {kg \cdot m^2} {A \cdot s^3} = A \cdot \Omega = \frac {W} {A} = \frac {J} {C}
+\]
+\[
+  Ampere = A = \frac {C} {s}
+\]
+\[
+  Coulomb = C = F \cdot V = A \cdot s
+\]
+
+\[
+Farad = F
+= \frac{A \cdot s}{V}
+= \frac{J}{V^2}
+= \frac{W \cdot s}{V^2}
+= \frac{C}{V}
+\]
+\[
+F
+= \frac{C^2}{J}
+= \frac{C^2}{N \cdot m}
+= \frac{s^2 \cdot C^2}{m^2 \cdot kg}
+= \frac{s^4 \cdot A^2}{m^2 \cdot kg}
+= \frac{s}{\Omega}
+\]
+
+\section{Circuit Properties}
+\[
+  M(\omega_c) = \frac {M_0} {\sqrt{2}}
+\]
+\[
+  B = \begin{cases}
+    0 \le \omega < \omega_c & \text{lowpass} \\
+    \omega > \omega_c & \text{highpass} \\
+    \omega_{c1} < \omega < \omega_{c2} & \text{bandpass} \\
+    \omega < \omega_{c1} \text{ and } \omega > \omega_{c2} & \text{bandreject} \\
+  \end{cases}
+\]
+\subsection{Quality Factor Q}
+  \
+\[
+  Q = 2 \pi \left.\left( \frac {W_{stor}} {W_{diss}} \right) \right|_{w=w_0}
+\]
+\subsection{Impedance Matching}
+Maximum Power Transfer occurs when \[ Z_L = Z_S^* \]
+Minimum reflection occurs when \[ Z_L = Z_S \]
+
+\columnbreak
+\section{Op-Amps}
+\begin{itemize*}
+  \item Infinite voltage gain ($G \rightarrow \infty$).
+  \item Infinite input impedance ($R_{in} \rightarrow \infty$).
+  \begin{itemize*}
+    \item Implies $i_p = i_n = 0$.
+  \end{itemize*}
+  \item Zero output impedance ($R_{out} \rightarrow 0$).
+  \item For negative feedback configurations only, $v_p = v_n$.
+  \item Analyze normally, but not at output (voltage not well-defined there).
+\end{itemize*}
+%\section{Transient Analysis}
+\section{Resistors}
+\begin{itemize*}
+  \item $i,v$ relation $i = v/R$
+  \item $v,i$ relation $v = iR$
+  \item Power $p = i^2R$
+  \item Stored energy $w = 0$
+  \item Series combination $R_{eq} = R_1 + R_2$
+  \item Parallel combination $R_{eq} = \frac {R_1R_2} {R_1 + R_2}$
+  \item Allows instantaneous $v$ and $i$ change
+\end{itemize*}
+\section{Capacitors}
+\begin{itemize*}
+  \item $i,v$ relation $i_C = C\frac {dv_C} {dt}$
+  \item $v,i$ relation $v(t) = v(t_0) + \frac {1} {C} \int_{t_0}^{t} i dt$
+  \item Initially acts like {\bf short} circuit.
+  \item $q = Cv$
+  \item Power $p = Cv \frac {dv} {dt}$
+  \item Stored energy $w = (1/2)Cv^2$ (should be in Joules)
+  \item Combine {\bf opposite} of resistors
+  \item Series combination $C_{eq} = \frac {C_1C_2} {C_1 + C_2}$
+  \item Parallel combination $C_{eq} = C_1 + C_2$
+  \item Becomes {\bf open} if left in DC for a long time
+  \item {\bf Voltage} across can't change instantly ($v_0 = v_{0-}$).
+  \item Allows instantaneous $i$ change
+  \item Natural response $v(t) = [v(t_0) - v(\infty)] e^{-(t - t_0) / \tau)}$
+  \item $\tau = \frac {1} {RC}$
+\end{itemize*}
+%\includegraphics[scale=0.15]{Discharging_capacitor.png}
+\section{Inductors}
+\begin{itemize*}
+  \item $i,v$ relation $i_L =  i(t_0) + \frac {1} {L} \int_{t_0}^{t} v dt$
+  \item $v,i$ relation $v_L = L \frac {di_L} {dt}$
+  \item Initially acts like {\bf open} circuit.
+  \item Becomes {\bf shorted} if left in DC for a long time
+  \item $p = Li\frac {di} {dt}$
+  \item Stored energy $W = \frac {1} {2} L i^2$ (should be in Joules).
+  \item Combine like resistors
+  \item Series combination $L_{eq} = L_1 + L_2$
+  \item Parallel combination $L_{eq} = \frac {L_1L_2} {L_1 + L_2}$
+  \item {\bf Current} across can't change instantly ($i_0 = i_{0-}$).
+  \item Allows instantaneous $v$ change
+  \item Natural response $i(t) = i(\infty) + [i(t_0) - i(\infty)](e^{-(t-t_0) / \tau})$
+  \item $\tau = \frac {1} {RL}$
+\end{itemize*}
+
+\section{RLC Circuits}
+Diff e.q. $x'' + ax' + bx = c$
+
+Initially $x(0)$ and $x'(0)$
+
+Finally $x(\infty) = \frac {c} {b}$,
+$\alpha = \frac {a} {2}$,
+$\omega_0 = \sqrt{b}$.
+
+$ \omega_c = \omega_0 = \frac {1} {\sqrt{LC}} $,
+$ \omega_d = \sqrt{w_0^2 - \alpha^2} $
+
+\subsection{Series}
+$ x(t) = v(t) $,
+$ \alpha = \frac {R} {LC} $
+
+\subsection{Parallel}
+$ x(t) = i(t) $,
+$ \alpha = \frac {1} {2RC} $
+
+\subsection{Overdamped Response $\alpha > \omega_0$}
+\[ x(t) = [x(\infty) + A_1e^{s_1t} + A_2e^{s_2t}]u(t) \]
+\[ s_1 = -\alpha + \sqrt{\alpha^2 - \omega_0^2} \]
+\[ s_2 = -\alpha - \sqrt{\alpha^2 - \omega_0^2} \]
+\[ A_1 = \frac {x'(0) - s_2[x(0) - x(\infty)]} {s_1 - s_2} \]
+\[ A_2 = -\frac {x'(0) = s_1[x(0) - x(\infty)]} {s_1 - s_2} \]
+\subsection{Critically Damped $\alpha = \omega_0$}
+\[ x(t) = [x(\infty) + (B_1 + B_2t)e^{-\alpha t}]u(t) \]
+\[ B_1 = x(0) - x(\infty) \]
+\[ B_2 = x'(0) + \alpha[x(0) - x(\infty)] \]
+\subsection{Underdamped $\alpha < \omega_0$}
+\[ x(t) = x(\infty) + [D_1cos\omega_dt + D_2sin\omega_dt]e^{-\alpha t}u(t) \]
+\[ D_1 = x(0) - x(\infty) \]
+\[ D_2 = \frac {x'(0) + \alpha[x(0) - x(\infty)]} {\omega_d} \]
+\[ \omega_d = \sqrt{\omega_0^2 - \alpha^2} \]
+
+\subsection{Bandpass}
+$ B = \omega_{c2} - \omega_{c1} = \frac {R} {L} $
+$ \omega_0 = \sqrt{\omega_{c1}\omega_{c2}} $
+$ Q = \frac {\omega_0} {B} $
+\[
+  \omega_{c1} = - \frac {R} {2L} + \sqrt{\left(\frac {R} {2L}\right)^2 + \frac 
+  {1} {LC}}
+\]
+\[
+  \omega_{c2} = \frac {R} {2L} + \sqrt{\left(\frac {R} {2L}\right)^2 + \frac 
+  {1} {LC}}
+\]
+\subsection{Series Bandpass}
+$ B = \frac {R} {L} $
+$ Q = \frac {\omega_0L} {R} $
+\subsection{Parallel Bandpass}
+$ B = \frac {1} {RC} $
+$ Q = \frac {R} {\omega_0L} $
+
+\section{Dividers}
+Current divider: 
+\[
+  i_1 = \frac {R_2} {R_1 + R_2}i_{source}
+\]
+Voltage divider:
+\[
+  V_{mid} = \frac {R_{ground}} {R_{ground} + R_{source}}
+\]
+
+\section{Nodal Analysis}
+Identify all extraordinary nodes, and choose one to be ground. Use KCL at each other node, with currents {\bf leaving} the node. All coefficients of the voltage at the node in the resulting equation should be positive (i.e. $V_1 / R$, not $-V_1/R$).
+
+\subsection{Supernode}
+If a voltage source connects two nodes, create one KCL equation for both. Also use $V_p - V_n = V_s$.
+
+\section{Mesh Analysis}
+Assign a clockwise current for each loop. Apply KVL and solve the resulting equations.
+
+\subsection{Supermesh}
+If a current source is between two meshes, create one KVL equation for both. Also use $i_1 - i_2 = i_{1,s}$.
+
+\section{$Y \rightarrow \Delta$ Transformation}
+
+$R_a$ between $2, 3$. $R_b$ between $1, 3$. $R_c$ between $1, 2$.
+
+\[
+  R_a = \frac {R_1R_2 + R_2R_3 + R_1R_3} {R_1}
+\]
+
+\[
+  R_b = \frac {R_1R_2 + R_2R_3 + R_1R_3} {R_2}
+\]
+
+\[
+  R_c = \frac {R_1R_2 + R_2R_3 + R_1R_3} {R_3}
+\]
+
+\section{$\Delta \rightarrow Y$ Transformation}
+
+\[
+  R_1 = \frac {R_bR_c} {R_a + R_b + R_c}
+\]
+\[
+  R_2 = \frac {R_aR_c} {R_a + R_b + R_c}
+\]
+\[
+  R_3 = \frac {R_aR_b} {R_a + R_b + R_c}
+\]
+
+\section{Wheatstone Bridge}
+\[
+  V_{out} \approx \frac {V_0} {4} \left( \frac {\Delta R} {R} \right)
+\]
+
+\section{Superposition}
+If there are only independent sources, they can be solved in disjoint sets, with all other's disabled.
+\end{multicols}
+
+
+\newpage
+
+\begin{multicols}{2}
+
+\includegraphics[scale=0.35]{BasicOp-AmpConfigurations.png}
+
+\section{Source Transform}
+\includegraphics[scale=0.4]{Sourcetrans.jpg}
+
+$V = IZ$, $I = \frac {V} {Z}$
+
+\columnbreak
+
+\begin{multicols}{2}
+
+\section{Instrumentation Amplifier}
+\includegraphics[scale=0.4]{400px-Op-Amp_Instrumentation_Amplifier.png}
+
+$Gain = \frac {V_{out}} {V_2 - V_1} = \left(1 + \frac {2R_1} {R_{gain}}\right) \frac {R_3} {R_2}$
+
+\section{Inductance Gyrator}
+\includegraphics[scale=0.4]{300px-Op-Amp_Gyrator.png}
+
+\section{Negative Impedance Converter}
+\includegraphics[scale=0.4]{300px-Op-Amp_Negative_Impedance_Converter.png}
+
+$R_{in} = -R_3 \frac {R_1} {R_2}$
+
+\section{Non-Ideal Op-Amp}
+\includegraphics[scale=0.4]{400px-Op-Amp_Internal.png}
+
+\section{Sallen-Key}
+\includegraphics[scale=0.4]{400px-Sallen-Key_Generic_Circuit.png}
+\[
+  \frac {v_{out}} {v_{in}} = \frac {Z_3Z_4} {Z_1Z_2 + Z_3(Z_1 + Z_2) + Z_3Z_4}
+\]
+\[
+  v_x = v_{out} \left( \frac {Z_2} {Z_4} + 1 \right)
+\]
+\end{multicols}
+\end{multicols}
+\end{document}

@@ -15,7 +15,7 @@ Click on a department page to find relevant materials.
 * [Education](./education)
 * [Engineering](./engineering)
 * [Environmental Design](./environmentaldesign)
-* Electrical Engineering
+* [Electrical Engineering](./electricalengineering)
 * [Environmental Science, Policy, and Management](./espm)
 * [Ethnic Studies](./ethnicstudies)
 * [French](./french)
