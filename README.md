@@ -10,7 +10,7 @@ Click on a department page to find relevant materials.
 * [Chemistry](./chemistry)
 * [City and Regional Planning](./cityplanning)
 * [Civil and Environmental Engineering](./civilengineering)
-
+* [Cognitive Science](./cognitivescience)
 
 Remember: if you're using this site to study, remember that sometimes the act of making cheat-sheets is better than the cheat-sheet itself!)
 
