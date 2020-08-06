@@ -11,7 +11,7 @@ Click on a department page to find relevant materials.
 * [City and Regional Planning](./cityplanning)
 * [Civil and Environmental Engineering](./civilengineering)
 * [Cognitive Science](./cognitivescience)
-* Computer Science
+* [Computer Science](./computerscience)
 * [Education](./education)
 * [Engineering](./engineering)
 * [Environmental Design](./environmentaldesign)

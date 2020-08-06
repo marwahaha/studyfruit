@@ -1,0 +1,389 @@
+{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang18441{\fonttbl{\f0\fnil\fcharset0 Calibri;}{\f1\fnil\fcharset1 Cambria Math;}{\f2\fnil\fcharset0 Cambria Math;}}
+{\*\generator Riched20 10.0.10586}{\*\mmathPr\mmathFont1\mwrapIndent1440 }\viewkind4\uc1 
+\pard\sl276\slmult1\b\f0\fs22\lang9 Binary\par
+\b0\par
+- Given n bits, we can store 2\super n\nosupersub  different numbers from 0 to 2\super n\nosupersub  - 1 (unsigned)\par
+-- sizeof(char) = 1 byte (8 bits); sizeof(int) = 4 bytes (32 bits) = 1 word (for MIPS) \par
+- Signed int: Give up first bit to be the sign bit, i.e. 0 = positive and 1 = negative. Allows us to quickly tell the sign by just looking at a number's first bit.\par
+-- Two's Complement: Split range into halves for negative and nonnegative, so we have one more negative than positive number\par
+-- Finding the complement (both negative and positive): Invert all bits and +1, i.e. ~x + 1\par
+- Overflow: Exceeding the max positive int loops back to the most negative int, and vice versa\par
+- To convert to hex, every 4 bits = one hex value\par
+\par
+Boolean algebra:\par
+- OR represented by +, AND by *\par
+- Identities:\par
+-- Law of 0's: X * 0 = 0, X + 0 = X\par
+-- Law of 1's: X * 1 = X, X + 1 = 1\par
+-- X X = X, (X+Y) X = X, X + X = X, X Y + X = X\par
+-- X\sub not\nosupersub  Y + X = X + Y, (X\sub not\nosupersub  + Y) X = X Y\par
+-- (X Y)\sub not\nosupersub  = X\sub not\nosupersub  + Y\sub not\nosupersub , (X + Y)\sub not\nosupersub  = X\sub not\nosupersub  Y\sub not\par
+\nosupersub - Bit masking: X * 0 = 0 and X * 1 = X, so AND with string of 0's and 1's to get desired bits\par
+\par
+Floating Point:\par
+- Format is similar to scientific notation: +-1.\{0,1\}... * 2\super\{0,1\}...\nosupersub\par
+- Single-precision float stored as 32-bit word: Sign (1 bit) | Exponent (8) | Significand (23)\par
+- Exponent is unsigned, but with a bias of -127\par
+-- Two's Complement not used because designers wanted bigger exponent field to represent bigger numbers, so floats could be sorted even without floating point hardware\par
+- Decimal = (-1)\super sign\nosupersub  * (1 + significand) * 2\super (exp - 127)\sub\par
+\nosupersub -- Double precision is 64-bits, with 52 bits (+29 more) for significand and 11 (+3 more) for exponent, with bias of -1023\sub\par
+\nosupersub - Decimal to float: Express decimal in binary, then since we are working in base 2, the effective exponent is just how many places the decimal point needs to be shifted to get the significand\par
+- Float to decimal: Calculate effective exponent, shift decimal point then convert to dec\par
+- Special numbers: Zero represented by exp = 0, sig = 0; infinity by exp = 255, sig = 0; NaN by exp = 255, sig != 0\par
+- Denormalized numbers: If exp = 0 and sig != 0, then remove leading 1 and set exp = -126\par
+-- Allows us to represent numbers as small as 2\super -149\nosupersub , given by 0.0...01 * 2\super -126\nosupersub , else the smallest number would be 1.0...01 * 2\super -127\nosupersub\par
+\b\par
+C\par
+\b0\par
+Syntax:\par
+- All variable declarations must be made at the beginning of a block. Make sure to initialize them, else they will contain whatever garbage is currently allocated to that space in memory!\par
+- int *x declares x as address of an int\par
+-- Address operator: x = &y takes only address of y and assigns to x\par
+-- Use *x again to derefence x and use the actual value stored there\par
+-- A pointer usually only points to one type; void* is the generic pointer but should be avoided!\par
+-- To point to a pointer (i.e. a handle), prefix an additional star, e.g. **x++ will increment the pointer *x then derefence the value it points to\par
+- structs: If given a pointer to a struct, we can access its fields by ptr->x or (*ptr).x\par
+- Arrays in C are primitive and basically a chunk in memory\par
+-- Declaration: int arr[2] or int arr[] = \{0, 1\}\par
+-- Arrays do not know their own length, which means we must also store its size separately, usually in a const (good practice)\par
+-- C also allows you to advance one element past the array, which is useful to test for exit e.g. while (pointer != &arr[last+1])\par
+-- Since array variables are simply pointers to the 0th element, so arr[2] and *(arr+2) for example are equivalent\par
+- Strings are char arrays: char str[] = "abc"; last char is followed by null terminator (\\0)\par
+\par
+Pointers: Allow us to pass objects without copying them, and to modify the original objects\par
+- Remember: Although a function can change the object that an input pointer is pointing to through the derefence operator, it cannot change the pointer itself!\par
+- An address is basically an unsigned int, being the index of the first array cell in memory assigned to an object. C then knows how many cells (bytes) to read based on sizeof(pointer type)\par
+- Pointer arithmetic: Should never be used except for arrays!\par
+-- Incrementing a pointer by 1 will increment its address by size of pointer type\par
+-- Can also compare pointers to each other or to NULL\par
+\par
+Memory Management\par
+- Stack: Every time a function is called, a new frame is appended, and it includes return address, arguments and space for local variables\par
+-- Stack pointer keeps track of position of bottom of stack, allowing us to find data by simply indexing upwards from it\par
+-- Make sure to store non-primitive return values outside the stack (in the heap), because stack memory will be invalid once function returns!\par
+- Heap: Space requested for dynamic data; resizes dynamically, grows upward\par
+-- malloc() allocates a block of unintialized memory (may contain garbage from previously), returning either void* pointer (remember to cast!) or NULL if there is insufficient free memory\par
+--- Usage: int *ptr; ptr = (int *) malloc(sizeof(int)); // Check for NULL!\par
+--- For strings: malloc(sizeof(char) * (strlen(str) + 1)); // +1 for null terminator\par
+--- Applying malloc on a struct will give a block large enough for the sum of sizeof() each data field. The address of the struct will be the same as that of the first data field.\par
+-- calloc(): block of zeroed memory\par
+-- free(ptr): free up block\par
+-- realloc(ptr, size): Change size of block, likely by moving it, then returning its new address\par
+-- Remember to free all memory that you allocate in heap, else you get memory leaks!\par
+- Static data (includes strings) and code do not change in size\par
+\par
+\b MIPS\b0\par
+\par
+- 32 registers, but we only use $s0 - $s7 for C vars and $t0 - $t7 for temporary vars\par
+- Registers have no type; operations determine how contents are treated\par
+- Arithmetic: add, addu (unsigned), sub, subu, sll, srl (shift left/right logical)\par
+- Immediates allow you to use constants: e.g. addi $s0, $s1, 10\par
+- Loads and stores allow us to derefence pointers stored in a register\par
+-- We usually use lw or sw (load/store word) since MIPS stores data in terms of words (4 bytes), in which case the offset must always be a multiple of 4\par
+-- Example: To access arr[3], we need to add an offset of 4x3=12: lw $t0, 12($s3)\par
+-- Other types also available, e.g. lbu (load byte unsigned) for single chars, or li (load immediate)\par
+- Conditionals: beq (branch if equals), bne (if not equal), j (jump), slt (set on less than)\par
+- jal (jump and link) will store (PC+4) to $ra, allowing us to jump back using jr $ra (jump to register)\par
+- slt is often followed by bne or beq against $0\par
+-- Example: slt $t0, $left, $right; bne $t0, $0, Less; will goto Less if $left < $right\par
+- Pseudo-instructions:\par
+-- move command does not actually exist, but is instead assembled into addi $a, $b, $zero\par
+-- mul: m bits * n bits = (m+n) bits result, so multiplying 32-bit integers will give a 64-bit integer. mult $s0, $s1 will automatically store the result into the hi and lo registers, which is then copied out using mfhi and mflo (move from hi/lo)\par
+-- Note: We usually only care about the lower half\par
+-- Similarly, div $s0, $s1 puts the quotient ($s0 / $s1) in lo and the remainder ($s0 % $s1) in hi\par
+\par
+Subroutines (Functions):\par
+- By convention, each subroutine can take 4 arguments $a0 to $a3, and can have 2 return values $v0, $v1\par
+- Procedure for a subroutine:\par
+[ Prologue ]\par
+1. Move stack pointer ($sp) down to make space: addi $sp, $sp, -8 (number of items to store * 4 bytes per word)\par
+2. Store $ra and any other variables to stack: e.g. sw $ra, 0($sp)\par
+-- For optimization, convention is for subroutines to preserve $ra, $sp, $gp, $fp and saved registers ($s0 - $s7), but not return value, argument and temp registers\par
+-- If you intend to use any saved pointers, be sure to save their old value to the stack first!\par
+-- We then usually cache arguments to a saved pointer, since there is no guarantee they will be preserved following an inner subroutine call\par
+[ If calling another subroutine ]\par
+3. Set up $a0 ... $a3\par
+4. Call the subroutine: jal <func> (jump and link)\par
+5. Return values are now in $v0, $v1. Use them if desired.\par
+[ Epilogue ]\par
+6. Restore $ra and any saved registers used: lw $ra, 4($sp)\par
+7. Restore stack pointer: addi $sp, $sp, 8\par
+8. Exit: jr $ra\par
+\par
+Instructions: Also stored as 32-bit words\par
+- R-format (for most instructions):\par
+-- opcode (6 bits) | rs (5) | rt (5) | rd (5) | shamt (5) | funct (6)\par
+-- opcode = 0, so funct selects variant of operation\par
+-- rs (source register) = first operand, rt (target reg) = second, rd = destination reg; all 5 bits since there are only 32 registers\par
+-- shamt contains the shift amount for shift instructions, and is 0 for all other instructions. Also 5 bits since shifting a 32-bit word by more than 31 is useless.\par
+- I-format (immediates): Same as R-format, except we need more than a 5-bit field since immediates may be large, so we combine rd, shamt, funct into a 16-bit field\par
+-- Since rd is removed, rt now denotes the destination register\par
+-- Branching is also suitable for immediates since we are likely only applying an offset of a small number of lines, which can be saved in an immediate. We then use relative address: PC (program counter) = (PC + 4) + (offset * 4). NOTE: Beginning of offset is counted from one instruction AFTER the branch!\par
+-- Can reach +- 2\super 15\nosupersub  instructions (words) = +- 2\super 17\nosupersub  bytes total around PC\par
+-- If immediate is >16 bits, compiler splits instruction up into lui (load upper immediate) on the upper 16 bits, then ori (or immediate) on the lower 16\par
+- J-format (jumps): Needs more space than branches since we can jump anywhere in memory\par
+-- Ideally, we would specify a 32-bit memory address to jump to, but since we need 6 bits for opcode, we use the remaining 26 bits for the target address. To extend it to 32 bits, we add 0b00 as the last two bits since addresses are all multiples of 4, then take the highest 4 bits from the PC. Hence, new PC = \{ (PC+4)[31:28] (4 bits), target addr (26 bits), 00 (2 bits) \}\par
+-- Adequate since most programs will fit within 256 MB, but if necessary, we can always use 2 jumps instead\par
+- Self-modifying instructions: Since instructions are also stored as words, we can modify them by using la (load address) on a label, then lw on that pointer to access a instruction, before replacing it with sw.\par
+\par
+Compilation Process:\par
+I. (C program) -- Compiler --> \par
+II. (Assembly program, i.e. MIPS with pseudo-instructions) -- Assembler -->\par
+- Assembler takes in assembly language code and outputs object code and information tables:\par
+1. Convert pseudo-instructions, assign addresses to each line\par
+2. Create relocation and symbol table\par
+-- Relocation info: Identifies lines of code containing dependencies that need to be fixed, including static data (like strings), lib functions, jump addresses but NOT branches\par
+-- Symbol table: List of publicly accessible labels (e.g. that of main()) and static data\par
+3. Resolve PC-relative labels, i.e. branches. The first pass has already stored the labels in the symbol table, so we just need a second one to fill in their relative offsets.\par
+4. Generate object file, which contains:\par
+-- Text segment: The machine code\par
+-- Data segment: Binary representation of static data\par
+-- Our symbol and relocation tables\par
+III. (Object file) -- Linker, links libs -->\par
+- Linker combines object files and info tables, outputting executable code:\par
+1. Merge text and data segments of each object file\par
+2. Calculate absolute address of each referenced label and piece of data\par
+3. Go through relocation table and fill in absolute addresses for each reference\par
+-- To resolve each reference, search in symbol tables and then library files\par
+- Note: This is the approach for statically-linked libraries. Dynamically-linked libraries (DLL) would reduce program sizes and allow for upgrades, but require overhead to do link at runtime\par
+IV. (Executable) -- Loader --> Load into memory\par
+- Loader creates new address space larger enough for text, data and a stack\par
+- Copies in instructions and data from executable, and arguments passed to the program onto the stack\par
+ \par
+\b Hardware\b0\par
+\par
+- CMOS transistors have 3 terminal: source, gate and drain\par
+-- n-channel transistors close when V\sub gate\nosupersub  = 1, and open when V\sub gate\nosupersub  = 0; p-channel (with NOT symbol), the inverse\par
+- Synchronous Digital Systems consist of two basic circuit types: Combinational Logic (CL), which performs our computations, and Sequential Logic (SL), which controls the flow of information between the former circuits\par
+- Registers only update on clock edge (usually rising edge), keeping system synchronized\par
+-- Flip-flops in register sample each bit of input (d) and update corresponding output (q) at CLK edge; input is ignored at all other times\par
+-- Involves setup time (before edge), hold time (after edge; usually subsumed by CLK-to-Q) and CLK-to-Q delay (propagation time between edge and output change)\par
+- Min clock cycle time = CLK-to-Q delay + CL-only delay of critical (longest) path + Setup time, which then gives us the max CLK freq\par
+-- Hold time not included; just make sure inputs do not change too fast after each CLK edge for registers to work\par
+- Finite State Machine (FSM): Shows transitions between states. Arrows labeled with input/output - e.g. if we want to move from S0 to S1 and output 0 on an input of 1, we would draw (S0) -- 1/0 --> (S1)\par
+-- Can also be expressed as a truth table\par
+-- Implemented using CL elements (computes next state and output based on current state and input) and registers (to store current state, updated on each CLK edge)\par
+- Truth tables: To convert to boolean algebra, look at the rows giving output 1 and just + (OR) them together\par
+- Mutiplexer (Mux): Takes multiple inputs and a select function that chooses one of those channels to be the output\par
+-- All muxes can actually be built from the basic 2(input) - 1(output) mux\par
+- Addition: Given two n-bit numbers, use n 1-bit adders with a carry-over bit to the next one\par
+-- c \sub i+1\nosupersub  = MAJ(a\sub i\nosupersub , b\sub i\nosupersub , c\sub i\nosupersub ) [majority, i.e. return 1 if at least 2 out of 3 are 1] = ab + bc + ac\par
+-- Subtraction: Compute a + (-b). To obtain -b, use two's complement: invert bits (XOR each bit with 1) and add the carry c\sub 0\nosupersub  = 1\par
+-- Overflow occurs if the last carry bit does not match the one before, i.e. XOR(c\sub n\nosupersub , c\sub n-1\nosupersub )\par
+- 80% of a computer consists of just registers and muxes\par
+\par
+Datapath:\par
+1. Instruction Fetch (IF): 32-bit instruction word fetched from memory, increment PC += 4\par
+2. Instruction Decode (ID): Read opcode, then data from all necessary registers\par
+3. Execute (EX): Arithmetic Logic Unit (ALU) does real work for most instructions\par
+4. Memory Access (MEM): Only for loads and stores\par
+5. Write Back to Register (WB): Used by most instructions, though not store, branch and jump\par
+- Load is the only instruction that uses all stages; ALU used to add to address e.g. lw $t0, 40($t1)\par
+- Main building blocks required: Adder, Mux, ALU\par
+- Each stage has a switch, which is set by the controller based on opcode and funct:\par
+-- ExtOp: Chooses whether to sign- or zero-extend immediate from 16 to 32 bits\par
+-- ALUSrc: Chooses between second register or the extended imm to be the second ALU input\par
+-- ALUctr: Selects ALU operation - Add, Sub, Or. (Note that ALU also always outputs whether the two inputs are Equals, for branches)\par
+-- MemtoReg: Chooses between output of ALU or data memory (i.e. loads) to be saved to reg\par
+-- RegWr/MemWr: Indicates if we are modifying reg/memory\par
+-- RegDst: Chooses between Rd (for R-type instructions) and Rt (I-type) to be the destination\par
+-- nPC_sel: Chooses between PC+4 or that added with an extended imm (if branching)\par
+-- Jumps: Require an additional mux to choose between output of nPC_sel or the jump address\par
+\par
+Pipelining: Queue instructions for each stage, so no idle resources\par
+- Time needed for each instruction is now only that of the longest stage, instead of whole cycle\par
+- To implement, introduce registers between stages to store output from previous one\par
+-- Need to copy instruction down pipeline as well, so WB stage acts on correct register\par
+- Hazards that may prevent the next instruction from starting:\par
+1. Structural Hazard: Conflict for use of a resource. Easiest to solve, since we can simply implement more hardware.\par
+-- Example: Two instructions need to read/write from memory or registers at same time. Solution: Read during first half and write during second, or have independent read/write ports\par
+2. Data Hazard: Data has not been written yet when next instruction needs it\par
+-- Solution: Forwarding Unit that captures output from ALU (stage 3) even before it has been written to register, then checks if the next instruction needs it for ALU\par
+-- Problem: Loads occur only in stage 4, hence if the next instruction needs the value, we need to delay it for one stage. Attempted solutions were to stall it (creating a "bubble") or adding a dummy instruction to take up time, but the best solution is simply for assembler to reorder loads earlier in the code\par
+3. Control Hazard: For branches and jumps, we don't know what the next instruction will be\par
+-- Solution: Implement branch comparator in ID (stage 2) that checks for branching and updates PC immediately, hence only one wrong instruction is fetched\par
+-- Compiler fills in delay slot with an earlier independent instruction\par
+-- Better solution than assuming branch isn't taken, then flushing pipeline if wrong\par
+\par
+\b Cache\b0\par
+\par
+- Split into sets, then blocks ("ways") to store addresses more efficiently\par
+-- Basic cache takes advantage of temporal locality. For spatial locality as well, each block can store multiple bytes\par
+-- 32-bit processor address split into Tag | Set Index | Block Offset (i.e. highest bits used as tag)\par
+-- No. of bits for set index = log\sub 2\nosupersub  (no. of sets), for block offset = log\sub 2\nosupersub  (bytes per block); the leftover bits go to tag\par
+-- Which block the data resides in is not determined from the address, but by comparing against the tags contained in target set - one comparator needed per block\par
+- Associativity measures number of blocks per set, so total blocks = no. of sets * associativity (* block size = cache size)\par
+-- Fully-associative has all blocks in one set while direct-mapped has only one block per set - latter allows us to use less comparators, since only need one per saved tag\par
+- Valid bit: Prepended to each cache tag entry. Useful because starting a new program should invalidate the cache\par
+- Write policies:\par
+-- Write-Back: Writes saved in cache, and stored only to memory when evicted. Dirty bit set on writes to indicate cached copy needs to be stored to memory.\par
+-- Write-Through: Simpler but slower. Every write stored in both cache and memory, handled by write buffer\par
+-- For cache misses: We can use write allocate (fetch into cache, usually paired with write-back) or no write allocate (no fetch, usually paired with write-through)\par
+- Replacement policy: Choose which block to evict when a set becomes full. Policies include Least-Recently Used (LRU), FIFO (round-robin) and random selection\par
+- Average Memory Access Time (AMAT): Hit time + Miss rate * Miss penalty\par
+- Cache misses are due to 3 C's (+1 with parallel caches):\par
+-- Compulsory, i.e. first time accessing data. Solution: \f1\u8593?\f2\lang18441  \f0\lang9 block size to improve spatial locality\par
+-- Capacity: If the number of new blocks stored since the data was first cached is greater than the cache can handle, such that the data had to be evicted. In other words, if the cache was fully associative, would the miss still have occurred?\par
+-- Conflicts: Multiple memory locations mapping to the same set index displacing each other, and hence most apparent for direct-mapped\par
+-- Coherence (Communication), a.k.a. False Sharing: Different section of same block written to on parallel caches, causing it to be invalidated across caches\par
+- Remember: Increments take two cache accesses, one for read and another for write\par
+- Solutions:\par
+1. Increasing block size:\par
+-- Hit Time: Unchanged\par
+
+\pard -- Miss Rate: \f1\u8595?\f0\lang9  initially due to spatial locality, then \f1\u8593?\f0\lang18441  \lang9 since having fewer blocks increases conflict misses\par
+-- Miss Penalty: \f1\u8593?\f0\lang18441  \lang9 due to longer block size, by a fixed constant initial latency \par
+
+\pard\sl276\slmult1 2. Increasing associativity:\par
+
+\pard -- Hit Time: \f1\u8593?\f0\lang9 , with the biggest jump from direct-mapped to multiple blocks. For direct-mapped, the block is available even before hit/miss decision, so we can just assume a hit and recover later if otherwise; but for the latter, we now need a mux delay to choose one of blocks\par
+
+\pard\sl276\slmult1 -- Miss Rate: \f1\u8595?\f0\lang9  due to reduced conflict misses, with greatest jump from 1 to 2 to 4-way\par
+-- Miss Penalty: Unchanged\par
+3. Increasing cache capacity (i.e. number of entries):\par
+
+\pard -- Hit Time: \f1\u8593?\f0\lang9\par
+
+\pard\sl276\slmult1 -- Miss Rate: \f1\u8595?\f0\lang18441  \lang9 due to reduced capacity/conflict misses. (Architects' rule of thumb: Drop in miss rate = sqrt(Increase in capacity))\par
+-- Miss Penalty: Unchanged\par
+4. To reduce miss penalty, use a multilevel cache\par
+-- Local miss rate: Fraction of references to one level that miss, e.g. L2 miss rate = L2 misses / L1 misses\par
+-- Global miss rate = Product of local miss rates for each level\par
+-- Now, L1 Miss Penalty = L2 AMAT (= L2 Hit Time + L2 Miss Rate * L2 Miss Penalty)\par
+\par
+\b Parallelism\b0\par
+\par
+- Request-Level (e.g. network requests) vs. Data-Level Parallelism (everything below)\par
+- Runtime per Program = (Instruction Count) * (Clock Cycles Per Instruction, CPI) * (Clock Cycle Time)\par
+-- Software components would only affect the first two, while hardware would affect all three\par
+- To get effective speedup from parallelism, large fraction of program must be parallelized\par
+-- Reason: If we have an enhancement that accelerates a fraction F of the task by a factor S, then we get Speedup = Time without / Time with enhancement = 1 / ((1 - F) + F/S), i.e. limited by (1 - F) term\par
+- Loop Unrolling: Increment by a k = multiple of 4, then repeat the inner body of each loop k times. Reduces loop overhead, in terms of how many times branch conditional is checked\par
+-- In code: for (int i = 0; i < n/k * k, i +=k)\par
+-- Remember to do a regular i++ loop to finish off the remainder (i.e. n % k)\par
+- Hardware Multi-threading: Use two copies of PC and registers inside each processor to minimize idling of processor resources\par
+- Multiprocessors will have one private cache per core; only cache misses have to access the shared memory. Interconnection network used to inform other caches on cache miss or writes, keeping them coherent\par
+\par
+- Synchronization pitfalls:\par
+-- Data Race: Two threads, at least one of which is a write, accessing the same memory location. Resulting value is hence non-deterministic, depending on which thread accesses first. Solution: If no lock, set a lock before going into critical section, else wait for lock to be lifted.\par
+-- Possible lock problem: Two threads read lock at same time and think it is unlocked. Hardware required to ensure atomic read/write operation, i.e. no other access allowed between the two. In MIPS: sc (store conditional) stores the data only if it has not been stored to by another thread since a previous (load linked) call, e.g. sc $t0, 0($s1) sets $t0 = 1 only if storing $t0->$t1 succeeds\par
+\par
+SIMD (Single-Instruction/Multiple-Data Stream):\par
+- Intel has eight 128-bit registers, each split into 4 x 32-bit ones (or 2 x 64-bit) so 4 operations (or 2) can be executed at one time\par
+-- Can imagine this as looping in steps of 4 instead of one at a time\par
+- For ints (__m128i):\par
+__m128i _mm_setzero_si128( )\par
+__m128i _mm_loadu_si128( __m128i *p)\par
+__m128i _mm_add_epi32( __m128i a, __m128i b) // Available operations: add, sub, mul\par
+void _mm_storeu_si128( __m128i *p, __m128i a)\par
+-- To use an array of 4 ints, remember to cast as (__m128i *)\par
+- Doubles/Floats (__mm128d / __mm128):\par
+__m128d _mm_load1_pd(double *p) [_ps for single-precision float] duplicates *p into each element of returned vector\par
+\par
+OpenMP: Enables multi-threaded, shared-memory parallelism\par
+- Forks program into multiple threads before joining back into master thread\par
+- Basic syntax:\par
+#include <omp.h>\par
+#pragma omp parallel [private(vars)]\par
+\{ // Opening brace must be on newline!\par
+\tab // omp_get_thread_num(): returns 0 if on master thread\par
+\tab // omp_get_num_threads()\par
+#pragma omp critical // Declares critical section, so a lock is placed on variable written to\par
+\tab x += ...\par
+\}\par
+- Or, for loops:\par
+#pragma omp parallel for\par
+for (...) \{ \}\tab // Breaks iterations (no premature exists allowed) into separate threads\par
+-- Variables declared private will cause a separate copy to be sent to each thread\par
+-- Outermost loop variable will be made private by default, with each thread being assigned its own loop range\par
+\par
+\b Modern Architecture\b0\par
+\par
+Virtual Memory: Protects processes from each other\par
+- Each process gets different part of physical memory, each with its own dynamic addresses\par
+- A pair of additional registers in CPU to store base and bounds addresses; separate pairs for PC and data so programs can share data\par
+- Paged memory system: Code and data of each program stored in pages (usually 4 KB each)\par
+-- To determine number of pages needed for code, remember each instruction uses 4 B\par
+-- Processor-generated address (32- or 64-bit for virtual, log\sub 2\nosupersub (memory size) for physical) is split into Page Number | Offset, much like a fully-associative cache\par
+-- Page size (in bytes) = 2^(offset); Page number bits are then the leftovers\par
+- Page Table: Maps virtual to physical page addresses. Allows us to store pages non-contiguously, to solve problem of fragmentation\par
+-- Number of entries = Number of virtual pages. Makes page table huge\par
+-- But max. valid entries = Number of physical pages. No relationship between size of physical and virtual address space!\par
+-- Stored in main memory => Additional memory access needed to retrieve base address\par
+-- Base Register bits = Physical address bits\par
+-- Bits stored in each row: Valid + dirty + read + write bit + Physical Page Number bits\par
+-- Private address space: Each user has a page table\par
+-- Page Fault: OS needs to load page, then store address in page table\par
+- Translation Lookaside Buffer (TLB): A central cache for page addresses, to bypass page tables\par
+-- Usually fully-associative, since less spatial locality across pages so more likely that two entries conflict\par
+-- Virtual page number forms the tag for each row\par
+-- Hit: Protection check, then single-cycle translation to retrieve associated physical page no.\par
+-- Miss: Page Table walk to refill TLB\b\par
+\b0\par
+I/O: Interface for external devices\par
+- MIPS uses Memory Mapped I/O: Some address space reserved for communication with I/O devices\par
+- Processor polls external device's control register; when Ready bit is set, processor loads from or writes to data register\par
+-- Doesn't require additional hardware; good for slow devices like mouse and keyboard\par
+- Interrupt-driven I/O is better for hardware with fast transfer rates that are rarely ready, though it has higher overhead. Unknown to program, CPU interrupts instruction steam when I/O is received and does a jal to the handler (as specified in CPU Interrupt Table)\par
+- Direct Memory Access (DMA) engine enables devices to read/write directly from memory. This frees up CPU, and also solve issue of device speeds being different from CPU speeds\par
+-- On interrupts, CPU instructs DMA to handle incoming/outgoing data, freeing itself up; DMA then interrupts CPU again upon completion\par
+-- Problem: Arbitration between CPU and DMA memory accesses. Three options: (1) Burst, where DMA accesses memory at one go; (2) Interleave DMA and CPU accesses, one byte at a time; (3) Transparent, where DMA accesses memory only when CPU is not\par
+- Traps: Handle interrupts and exceptions by hardware jump to "trap handler"\par
+-- To handle possible exceptions in each of our 5-stage pipeline - PC address exception, illegal opcode, overflow, data address exception - we hold exception flags in pipeline, with that of earlier stages overriding later ones, then at commit point (Memory stage) we kill all stages and inject handler PC\par
+\par
+Hard Drives\par
+- Plates separated into tracks (cylinders), then sectors\par
+- Airtight, to keep dust out and enable head to stay close to the disk\par
+- Disk Access Time (for misses) = Seek + Rotation + Transfer Time + Controller Overhead\par
+-- Seek Time: Move arm to correct track. Average = # of tracks / 3 * time to move across a track\par
+-- Rotation Time: Rotate disk to correct sector. Average = 1/2 a revolution\par
+- Flash Memory (SSDs): Requires algorithms to spread out writes, so as not to wear out cells\par
+\par
+Error Correction Codes (Hamming ECC)\par
+- Single Error Correction (SEC):\par
+1. Counting the leftmost bit of data block as position 1, add extra parity bits at powers of 2, i.e. 1, 2, 4, ...\par
+2. Each parity bit sums up positions whose bit address has that bit turned on, then sets itself to 0 or 1 to make the total parity even. Since all data position addresses must contain at least two 1's, each one will be covered by at least two parity bits:\par
+-- 1st bit: Checks bits 1, 3, 5, 7, 9, ...\par
+-- 2nd bit: Checks 2, 3, 6, 7, 10, ...\par
+-- 4th bit: Checks 4-7, 12-15, ...\par
+-- 8th bit: Checks 8-15, ...\par
+3. After receiving (possibly corrupted) code, check that each sum is even. If one data error occurred, two sums will be odd; adding their parity bit positions will give the error position\par
+-- E.g. If sums of 2nd and 8th parity bits are odd, then error is in 10th bit\par
+- Double Error Detection (DED): SEC is only able to correct one error, hence we add an additional parity bit at the (right) end of the bitstring to maintain the overall parity, which would end up flipping once if one error occurred and twice if two\par
+-- Parity bits EVEN, Overall parity EVEN: No error\par
+-- Parity bits ODD, Overall parity ODD: One error (or an odd number!)\par
+-- Parity bits ODD, Overall parity EVEN: Two errors (or an even number!)\par
+-- Parity bits EVEN, Overall parity ODD: Error in overall parity bit\par
+\par
+Dependability (via redundancy)\par
+- Probability of failure rises exponentially with time\par
+-- Mean Time to Failure (MTTF) = Time at which cumulative probability of failure is 1/3\par
+- Availability: MTTF / (MTTF + Mean Time to Repair)\par
+- RAID (Redundant Array of Inexpensive Disks):\par
+-- RAID 0: Data disks only, no checks\par
+-- RAID 1: Extra copy of each disk. Most excessive, but high availability and fast\par
+-- RAID 3: One additional disk per parity group for error correction; data spread over all disks in group\par
+-- RAID 4: Transfer units are sectors within each disk, allowing for fast small reads, but having only a single check disk bottlenecks multiple small writes\par
+-- RAID 5: Check information is distributed across all disks, allowing small writes to occur simultaneously\par
+\par
+\b Misc\b0\par
+\par
+Warehouse-Scale Computing:\par
+- Power Usage Effectiveness (PUE): Total building power / IT equipment power. Measures power effectiveness, not that of servers/network. Perfect score = 1.0; Google's = 1.2\par
+- Fast but unreliable\par
+- Expensive to prevent disk failures; should handle them gracefully instead\par
+- Use Energy-Proportional Computing to save power\par
+\par
+Boot Sequence: Similar to executing MIPS program\par
+0. Execute instruction from some start address (stored in Flash ROM)\par
+1. BIOS: Find storage device and load first sector\par
+2. Bootloader: Loads OS into memory, jumps into it\par
+3. OS Boot\par
+4. Init: Launch application, e.g. Shell, Desktop\par
+\par
+OS:\par
+- User Mode protects OS from processes; need supervisor mode for full access\par
+- syscalls allows us to perform software interrupt, during which OS performs the operation - hence it can mediate access to all resources\par
+- Scheduling: OS can only run one process per core at any time, and hence switches them very quickly to give the illusion that they are running in parallel\par
+}
+ 
