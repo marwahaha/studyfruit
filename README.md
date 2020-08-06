@@ -26,7 +26,7 @@ Click on a department page to find relevant materials.
 * [International and Area Studies](./ias)
 * [Industrial Engineering & Operations Research](./ieor)
 * [Materials Science and Engineering](./mse)
-* Math
+* [Math](./math)
 * [Mechanical Engineering](./mechanicalengineering)
 * [Molecular and Cell Biology](./mcb)
 * [Nutritional Sciences and Toxicology](./nst)
