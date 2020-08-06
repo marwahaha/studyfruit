@@ -31,7 +31,7 @@ Click on a department page to find relevant materials.
 * [Molecular and Cell Biology](./mcb)
 * [Nutritional Sciences and Toxicology](./nst)
 * [Peace and Conflict Studies](./pacs)
-* Physics
+* [Physics](./physics)
 * [Political Science](./politicalscience)
 * [Sociology](./sociology)
 * [Statistics](./statistics)
